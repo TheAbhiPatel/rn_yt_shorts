@@ -7,19 +7,42 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import Video from 'react-native-video';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withSpring,
+} from 'react-native-reanimated';
+import {TapGesture} from 'react-native-gesture-handler/lib/typescript/handlers/gestures/tapGesture';
+import {TapGestureHandler} from 'react-native-gesture-handler';
+
+const ImageComponent = Animated.createAnimatedComponent(Image);
 
 const Shorts = () => {
   const {height, width} = useWindowDimensions();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
-  console.log('------------->', height);
-
+  const scale = useSharedValue(0);
+  const doubleTap = useCallback(() => {
+    scale.value = withSpring(1, undefined, isFinished => {
+      if (isFinished) {
+        scale.value = withDelay(300, withSpring(0));
+      }
+    });
+    console.log('------ is Liked ------>', 'True');
+  }, []);
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{scale: Math.max(scale.value, 0)}],
+    };
+  });
   return (
     <View style={{flex: 1, backgroundColor: 'blue'}}>
       <FlatList
         pagingEnabled
+        scrollEnabled
         showsVerticalScrollIndicator={false}
         onScroll={e =>
           setSelectedIndex(Math.ceil(e.nativeEvent.contentOffset.y / height))
@@ -36,8 +59,6 @@ const Shorts = () => {
           return (
             <View
               style={{
-                // width: '100%',
-                // position: 'relative',
                 height: height,
                 backgroundColor: '#000',
               }}>
@@ -197,23 +218,30 @@ const Shorts = () => {
                 </View>
               </View>
             </View>
-            // ------------------
-            // <View style={{flex: 1}}>
-            //   <View
-            //     style={{
-            //       // position: 'absolute',
-            //       // top: 0,
-            //       // left: 0,
-            //       // bottom: 0,
-            //       // right: 0,
-            //       height: height,
-            //       borderWidth: 2,
-            //       backgroundColor: 'red',
-            //     }}></View>
-            // </View>
           );
         }}
       />
+      <TapGestureHandler
+        maxDelayMs={550}
+        numberOfTaps={2}
+        onActivated={doubleTap}>
+        <Animated.View
+          style={{
+            position: 'absolute',
+            height,
+            width,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <ImageComponent
+            source={require('./heart.png')}
+            style={[
+              {width: 100, height: 100, tintColor: '#fff'},
+              animatedStyle,
+            ]}
+          />
+        </Animated.View>
+      </TapGestureHandler>
     </View>
   );
 };
