@@ -9,15 +9,17 @@ import {
 import React from 'react';
 import Shorts from './src/Shorts';
 import {FlatList} from 'react-native';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 const App = () => {
   const {height, width} = useWindowDimensions();
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <StatusBar />
-      {/* <Shorts /> */}
-      {/* <ScrollView style={{flex: 1}} pagingEnabled>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <SafeAreaView style={{flex: 1}}>
+        <StatusBar />
+        {/* <Shorts /> */}
+        {/* <ScrollView style={{flex: 1}} pagingEnabled>
         <View
           style={{
             width,
@@ -26,10 +28,10 @@ const App = () => {
             borderWidth: 2,
           }}></View>
       </ScrollView> */}
-      <View style={{height}}>
-        <Shorts />
+        <View style={{height}}>
+          <Shorts />
 
-        {/* <FlatList
+          {/* <FlatList
           data={[1, 2, 4, 5]}
           pagingEnabled
           style={{height}}
@@ -43,8 +45,9 @@ const App = () => {
               }}></View>
           )}
         /> */}
-      </View>
-    </SafeAreaView>
+        </View>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 };
 
